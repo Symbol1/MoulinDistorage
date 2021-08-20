@@ -10,3 +10,6 @@ Abstract is at
 A recording of rehearsal is available at
 <https://www.youtube.com/watch?v=BC8rGig-QoM>
 
+Paper version is available at
+<https://arxiv.org/abs/2006.08911>
+
