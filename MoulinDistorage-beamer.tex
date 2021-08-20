@@ -1,0 +1,650 @@
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = xelatex
+% !TEX spellcheck = English
+% !TEX pdfSinglePage
+
+\makeatletter
+
+\documentclass[aspectratio=1610]{beamer}
+	\beamertemplatenavigationsymbolsempty
+	\setbeamercovered{transparent=25}
+	\setbeamersize{text margin left=3mm,text margin right=3mm}
+	\def\CMH{\gdef\beamer@currentmode{handout}}
+	\def\CMB{\gdef\beamer@currentmode{beamer}}
+	\advance\parskip\fill
+	\def\uncovert#1{\uncover<+->{\alert<.>{\ignorespaces#1}}}
+	\def\recall#1{{\small Recall:#1}}
+	
+	\catcode`激13 \def激#1{\lccode`~`#1\lowercase{\catcode`#113\def~}}
+	激色#1!#2#3#4#5#6#7{\definecolor{#1}{HTML}{#2#3#4#5#6#7}}
+	色Illini Orange!FF552E  色Altgeld!DD3403  色Illini Blue!13294B
+	色Alma! 1E3877色Industrial! 1D58A7色Arches! 009FD4色Cloud! F8FAFC色Heritage! F5821E
+	色Alma2!4D69A0色Industrial2!5783BC色Arches2!7FC3E1色Cloud2!E8E9EB色Heritage2!E56E15
+	色Alma3!849BC1色Industrial3!90AED5色Arches3!A6D7EB色Cloud3!DDDEDE色Heritage3!CE5E11
+	色Alma4!AFC7DB色Industrial4!CAD9EF色Arches4!D2EBF5色Cloud4!D2D2D2色Heritage4!B74D04
+	\setbeamercolor{normal text}{bg=Illini Blue,fg=Cloud}
+	\setbeamercolor{structure}{fg=Illini Orange}
+	\setbeamercolor{alerted text}{fg=Heritage}
+	\setbeamercolor{example text}{fg=Altgeld}
+
+\usepackage{xurl}
+	\hypersetup{colorlinks,urlcolor=Arches}
+
+\usepackage{mathtools,unicode-math}
+	\setmainfont{Montserrat-Light}
+	\setsansfont{Montserrat-Light}
+	\setmonofont{Montserrat-Light}
+	\setmathfont{texgyrepagella-math.otf}
+	
+	激（{\bigl(} 激）{\bigr)}激［{\bigl[} 激］{\bigr]} 激｛{\bigl\{} 激｝{\bigr\}}
+	激：{\colon} 激↾{\bigr\upharpoonright} 激†#1†{{\text{#1}}}
+	\DeclareMathOperator\spa{span}
+	\DeclareMathOperator\dom{dom}
+	\DeclareMathOperator\im{im}
+	\DeclareMathOperator\id{id}
+
+\usepackage{tikz,tikz-cd}
+	% https://tex.stackexchange.com/q/420034/
+	\pgfmathdeclarefunction*{axis_height}0{\begingroup\pgfmathreturn.25em\endgroup}
+	\pgfmathdeclarefunction*{rule_thickness}0{\begingroup\pgfmathreturn.06em\endgroup}
+	\tikzset{
+		every picture/.style={
+			cap=round,join=round,line width=rule_thickness,
+		},
+		/pgf/arrow keys/glyph math command/.code={
+			\pgfarrowsaddtooptions{\def\tikzcd@glyph{$\color{.}\csname #1\endcsname$}}
+		},
+		>/.tip={Glyph[glyph math command=rightarrow,glyph length=.32em]},
+		>>/.tip={Glyph[glyph math command=twoheadrightarrow,glyph length=.49em]},
+		c/.tip={Glyph[glyph math command=hookleftarrow, swap,glyph length=.28em]},
+		% https://tex.stackexchange.com/q/55806/
+		alt/.code args={<#1>#2#3}{\alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}},
+		cloud/.style={
+			nodes={align=center,draw,outer sep=1ex},
+			every edge/.style={draw,overlay,out=-90,in=90-30*(\h-4),->}
+		},
+		in/.code=\pgfmathsetmacro\tikz@to@in{#1}\tikz@to@switch@on,
+		out/.code=\pgfmathsetmacro\tikz@to@out{#1}\tikz@to@switch@on,
+	}
+	\tikzcdset{
+		every arrow/.style={/tikz/draw,->},
+		skew/.style={
+			row sep=1.5em,column sep=-1em,cells={xshift=-\pgfmatrixcurrentrow*2em}
+		},
+	}
+	激＆{}
+	\newcommand\CD[2][]{\begin{tikzcd}[ampersand replacement=＆,#1]#2\end{tikzcd}}
+	激直{
+		\uar[xshift=.5em,<-c]\uar[xshift=-.5em,->>]
+		\dar[xshift=.5em,->>]\dar[xshift=-.5em,<-c]
+	}
+	激斜{
+		\ar[start anchor={[xshift=1.5em]south},end anchor={[xshift=-1.5em]north}]
+			{ddr}[pos=1/3]{∇}
+	}
+	激歪<#1>{
+		\ar[start anchor={[xshift=1.5em]south},end anchor={[xshift=-1.5em]north},
+			alt=<#1>{alerted text.fg}{}]{ddr}[pos=1/3]{∇}
+	}
+	激空<#1>{
+		\ar[start anchor={[xshift=1.5em]south},end anchor={[xshift=4em]north east},
+			alt=<#1>{alerted text.fg}{opacity=0},overlay]{dd}[pos=1/3]{∇}
+	}
+	激曲{
+		\ar[start anchor=north,end anchor=south,xshift=1.5em,c->,overlay]{uu}
+	}
+	激Ａ{\alert}
+	\def\alerrow#1{{
+		\large#1\tikz[baseline=-axis_height]
+		\draw(0,0)node[right,overlay,scale=4,alerted text.fg]{$⇐\strut$};}
+	}
+
+\usepackage{pgfplotstable,booktabs,colortbl}
+	\pgfplotsset{compat/show suggested version=false,compat=1.18}
+	\pgfplotstableset{
+		every head row/.style={before row=\toprule,after row=\midrule},
+		every last row/.style={after row=\bottomrule},string type,
+	}
+	\def\arraystretch{1.44}
+	\pgfplotsinvokeforeach{1,...,7}{
+		\tikzset{
+			n#1/.pic={
+				\draw[reset cm]({2*(#1-4)},{1/2*(-1)^#1})node(n#1){hard disk \##1};
+			},
+			N#1/.pic={
+				\draw[reset cm]({2*(#1-4)},{1/2*(-1)^#1})node(N#1){size-$α$ disk \##1};
+			}
+		}
+	}
+
+\usepackage{qrcode}
+
+\title{Moulin Coding}
+\subtitle{A Multilinear-Algebraic Solution for Cloud Storage Services}
+\author[H-P Wang]{Hsin-Po WANG\texorpdfstring\\{}\small(with Iwan Duursma and Xiao Li)}
+\institute[UIUC]{Department of Mathematics, University of Illinois Urbana-Champaign}
+\date[SIAM AG21]{2021-8-19 SIAM AG21}
+\subject{cs.IT; 94B27, 68P20; 15A75}
+
+\begin{document}
+
+\def\linkfil#1{\vfil\vbox to#1cm{\hbox{.}\vfil\hbox to3mm{\hfil.}}}
+\defbeamertemplate*{sidebar left}{thin-bold}{\pgfsetfillopacity0\vfilneg
+	\hyperlinkframeendprev{\linkfil1}\hyperlinkslideprev{\linkfil3}
+	\hyperlinkslidenext{\linkfil3}\hyperlinkframestartnext{\linkfil1}
+	\pgfsetfillopacity1\vfilneg}
+
+\frame{\vfill\maketitle}
+
+\makeatletter
+\tikzset{短/.pic={\node at(-.55,-.5)[rotate=-90,text width=\paperheight]{%
+	\hfil\beamer@shortauthor\hfil\beamer@shorttitle\hfil\beamer@shortdate\hfil};}}
+\defbeamertemplate*{sidebar right}{thin-bold}{\tikz[overlay,x=3mm,y=\paperheight]{
+	\def\olfrac{\insertoverlaynumber/(\insertframeendpage+1-\insertframestartpage)}
+	\path[save path=\梯,yscale={1/(\insertmainframenumber-1)}]
+		(0,0)-|(-1,1-\insertframenumber)-|+({\olfrac},1)-|cycle;\footnotesize
+	\pic[Alma4]{短};\fill[use path=\梯,Alma3];\clip[use path=\梯];\pic[Alma]{短};}}
+\makeatother
+
+\def\parti{Part I: Motivation from cloud storage services}
+\def\partii{Part II: Construction of \emph{Moulin Codes}---special case}
+\def\partiii{Part III: Construction of \emph{Moulin Codes}---general case}
+
+\section{Outline}
+
+\frame{{Outline}
+	\uncovert{
+		\parti
+	}
+	
+	\uncovert{
+		\partii
+	}
+	
+	\uncovert{
+		\partiii
+	}
+}
+
+\frame{{Outline}
+	\alerrow\parti
+	
+	\partii
+	
+	\partiii
+}
+
+\section{Motivation from cloud storage services}
+
+\frame{{Motivation from cloud storage services}
+	\vskip0ptplus-1fill
+	$$\tikz[cloud]{
+		\draw(0,-3)node(phi){\strut
+			\only<-2>{a large file}%
+			\only<3>{\phantom{a large file}}%
+			\only<4>{recovered file}%
+			\only<5>{happy customer =)}%
+		};
+		\foreach\h in{1,...,7}{
+			\draw pic(){n\h};
+			\draw<2>(n\h)edge[<-](phi);
+			\draw<4>(n\h)edge(phi);
+		}
+	}$$
+	
+	\uncovert{
+		A cloud storage service is a collection of hard disks that help you store big files.
+	}
+	
+	\uncovert{
+		Initially, you upload a big file to the cloud. Each hard disk will store part of the file.
+	}
+	
+	\uncovert{
+		You then delete the local copy to free up some space.
+	}
+	
+	\uncovert{
+		Later, when the file is needed, you download the file from the cloud.\\
+		 Cloud company guarantees that it is exactly the same file as prevously uploaded.
+	}
+	
+	\uncovert{
+		From your point of view, it just works smoothly. But the cloud sees it differently.
+	}
+}
+
+\section{What could go wrong behind the scene?}
+
+\frame{{What could go wrong behind the scene?}
+	\vskip0ptplus-1fill
+	$$\tikz[cloud]{
+		\draw(0,-3)node(phi){\strut
+			\only<1,5-7>{\phantom{the same file}}%
+			\only<2-4>{the same file}%
+		};
+		\draw[opacity=0]foreach\h in{1,...,7}{pic(){n\h}};
+		\draw<1>foreach\h in{1,...,7}{pic{n\h}};
+		\draw<2>foreach\h in{2,3,5,6,7}{pic{n\h}(n\h)edge(phi)};
+		\draw<3>foreach\h in{1,2,3,4,7}{pic{n\h}(n\h)edge(phi)};
+		\draw<4>foreach\h in{1,3,4,5,6}{pic{n\h}(n\h)edge(phi)};
+		\draw<5>
+			foreach\h in{1,2}{pic{n\h}(n\h)edge[in=-90-20*\h](n3)}
+			foreach\h in{3}{pic[alerted text.fg]{n\h}}
+			foreach\h in{4,5,6,7}{pic{n\h}(n\h)edge[in=-90+10*(8-\h)](n3)}
+		;
+		\draw<6>
+			foreach\h in{1,2,3}{pic{n\h}(n\h)edge[in=-90-10*\h](n4)}
+			foreach\h in{4}{pic[alerted text.fg]{n\h}}
+			foreach\h in{5,6,7}{pic{n\h}(n\h)edge[in=-90+10*(8-\h)](n4)}
+		;
+		\draw<7>
+			foreach\h in{1,...,6}{pic{n\h}(n\h)edge[in=-90-10*\h](n7)}
+			foreach\h in{7}{pic[alerted text.fg]{n\h}}
+		;
+	}$$
+	
+	\uncovert{
+		Difficulty A: Errors (mostly erasures) occur spontaneously. To ensure that\\
+		errors do not corrupt your file, the cloud is equipped with error-correcting codes.
+	}
+	
+	\uncovert{
+		For instance, we may use a $[7,5,3]$-MDS code to protect the file, meaning that\\
+		every set of $5$ disks contains sufficient information to recover the file.
+	}
+	\uncovert{Example 2}
+	\uncovert{3}
+	
+	\uncovert{
+		Difficulty B: Fixing errors costs money. Certainly we can recover the file from\\
+		healthy disks and simulate the uploading phase. Can it be cheaper?
+	}
+	\uncovert{Example 2}
+	\uncovert{3}
+}
+
+\section{Some notations and requirements of being a good cloud}
+
+\frame{{Some notations and requirements of being a good cloud}
+	\vskip0ptplus-1fill
+	$$\tikz[cloud]{
+		\draw(0,-3)node(phi){\strut
+			\only<1-2>{$M$-symbol file}%
+			\only<3>{\phantom{size-$M$ file}}%
+		};
+		\draw[opacity=0]foreach\h in{1,...,7}{pic(){N\h}};
+		\draw<1>foreach\h in{1,...,7}{pic{N\h}};
+		\draw<2>foreach\h in{2,3,5,6,7}{pic{N\h}(N\h)edge(phi)};
+		\draw<3>[b/.style={auto,draw=none,inner sep=0}]
+			foreach\h in{1,2}{pic{N\h}(N\h)edge[in=-90-10*\h]node[b,']{$β$}(N3)}
+			foreach\h in{3}{pic[alerted text.fg]{N\h}}
+			foreach\h in{4,5,6,7}{pic{N\h}(N\h)edge[in=-90+10*(8-\h)]node[b]{$β$}(N3)}
+		;
+	}$$
+	
+	\uncovert{
+		The following notations are used in literature: The file consists of $M$ symbols.\\
+		There are $n$ ($=7$) hard disks. Every disk stores $α$ symbols. ($α$ called \emph{disk capacity}).
+	}
+	
+	\uncovert{
+		Requirement A: Every set of $k$ ($=5$) disks suffices to recover the file.
+	}
+	
+	\uncovert{
+		Requirement B: Every set of $d$ ($=6$) disks can reconstruct, from scratch, one other\\
+		disk by each sending out $β$ symbols of what it has. ($β$ is called \emph{repair bandwidth}.)
+	}
+}
+
+\section{Designing cloud as a linear coding problem}
+
+\frame{{Designing cloud as a linear coding problem}
+	\uncovert{
+		We can now formalize what a cloud should satisfy.
+	}
+	
+	\uncovert{
+		File size $M$ symbols $⟷$ File is a linear map $φ：𝔽^M→𝔽$, for some finite field $𝔽$.
+	}
+	
+	\uncovert{
+		$n$ disks, capacity $α$ $⟷$ the $h$th disk stores $φ↾_{X_h}$ for some subspace $𝔽^α≅X_h⊆𝔽^M$.
+	}
+	
+	\uncovert{
+		Any $k$ disks recover the file $⟷$ Any $k$ subspaces $X_{h_1},\dotsc,X_{h_k}$ span $φ$'s domain, $𝔽^M$.
+	}
+	
+	\uncovert{
+		Any $d$ disks repair, bandwidth $β$ $⟷$ $∃$ subspaces $𝔽^β≅Y_h^f⊆X_h$ s.t.\ $Y_{h_1}^f+\dotsb+Y_{h_d}^f⊇X_f$.
+	}
+	
+	\uncovert{
+		One such tuple $(n,k,d,α,β,M;\{X_h\},\{Y_h^f\})$ is called a \emph{regenerating code}.
+	}
+	
+	\uncovert{
+		Sanity check: $k≤d<n$ (repairing is possible) and $dβ<M$ (repairing is nontrivial).
+	}
+}
+
+\frame{{Outline}
+	\parti
+	
+	\alerrow\partii
+	
+	\partiii
+}
+
+\section{Construct Moulin Code for special case k = d}
+
+\frame{{Construct Moulin Code for special $k=d$}
+	\recall{
+		$n$ disks; $k$ recover the file; $d$ repair erased disks; $k≤d<n$, otherwise trivial.
+	}
+	
+	\uncovert{
+		Let $W≔𝔽^k$. Consider the wedge-multiplication
+		\begin{align*}
+			W⊗W∧W	&	⟶W∧W∧W,	\\
+			x⊗y∧z	&	⟼x∧y∧z.	
+		\end{align*}\\
+	}
+	
+	\uncovert{
+		It has a natural transpose/dual map, called co-wedge-multiplication
+		\begin{align*}
+			∇：W∧W∧W		&	⟶W⊗W∧W,				\\
+			x∧y∧z		&	⟼x⊗y∧z-y⊗x∧z+z⊗x∧y.	
+		\end{align*}\\
+	}
+	
+	\uncovert{
+		Let the file be any map $φ：W⊗W∧W→𝔽$ such that $φ↾_{\im∇}=0$, meaning that\\
+		it satisfies parity checks $0=φ(∇(x∧y∧z))=φ(x⊗y∧z)-φ(y⊗x∧z)+φ(z⊗x∧y)$.
+	}
+}
+
+\frame{{$k=d$ special case, page 2}
+	\recall{
+		$n$ disks; $k$ recover the file; $d$ repair erased disks. $W≔𝔽^k$; and $φ↾_{\im∇}=0$.
+	}
+	
+	\uncovert{
+		Let the $n$ disks choose vectors $c₁,c₂,\dotsc,c_n∈W$ that are MDS (i.e., any $k$ span $W$).\\
+		Let the $h$th disk store the restriction $φ↾_{c_h⊗W∧W}$
+	}
+	
+	\uncovert{
+		Any $k$ disks recover $φ$: Let $𝒦$ be a set of $k$ indices, then by multilinearity \& MDSness,\\
+		$∑_{h∈𝒦}c_h⊗W∧W=\spa⟨c_h:h∈𝒦⟩⊗W∧W=W⊗W∧W=$ the entire domain of $φ$.
+	}
+	
+	\uncovert{
+		When the $f$th disk is erased, the $h$th disk sends it $φ↾_{c_h⊗c_f∧W}$ to help repair.
+	}
+	
+	\uncovert{
+		Let $𝒟$ be a set of $d$ indices, $∑_{h∈𝒟}c_h⊗c_f∧W=\spa⟨c_h:h∈𝒟⟩⊗c_f∧W=W⊗c_f∧W$.\\
+		We repair $φ(c_f⊗y∧z)=φ(y⊗c_f∧z)-φ(z⊗c_f∧y)$ as RHS is learned from $φ↾_{W⊗c_f∧W}$
+	}
+}
+
+\frame{{Outline}
+	\parti
+	
+	\partii
+	
+	\alerrow\partiii
+}
+
+\section{Construct Moulin Code for general case k ≤ d}
+
+\frame{{Construct Moulin Code for general case $k≤d$}
+	\recall{
+		$n$ disks; $k$ recover the file; $d$ repair erased disks. $W≔𝔽^k$.
+	}
+	
+	\uncovert{
+		Let $V≔𝔽^{d-k}$. Let $U≔V⊕W=𝔽^d$. Consider the diagram:
+	}
+	\uncovert{
+		$$\CD[skew]{
+			W∧W∧W歪<4>	＆	V⊗W∧W歪<5>	＆	V⊗V⊗W歪<6>	＆	V⊗V⊗V空<7>	\\
+						＆	U⊗W∧W直		＆	V⊗U⊗W直		＆	V⊗V⊗U直	\\
+						＆	W⊗W∧W		＆	V⊗W⊗W		＆	V⊗V⊗W	
+		}$$
+	}
+	
+	\uncovert{
+		The file is a map $φ：†direct sum of U-spaces†→𝔽$ that vanishes on $\im(\id-∇)$.\\
+	}
+	\uncovert{
+		I.e., $0≕φ(x∧y∧z)=φ(x⊗y∧z)-φ(y⊗x∧z)+φ(z⊗x∧y)$ where $x,y,z∈W$\\
+	}
+	\uncovert{
+		and $φ(x⊗y∧z)=φ(x⊗y⊗z)-φ(x⊗z⊗y)$ where $x∈V$ and $y,z∈W$\\
+	}
+	\uncovert{
+		and $φ(x⊗y⊗z)=φ(x⊗y⊗z)$ where $x,y∈V$ and $z∈W$ (not tautology but gluing)\\
+	}
+	\uncovert{
+		and $φ(x⊗y⊗z)=φ(∇(x⊗y⊗z))≔0$ where $x,y,z∈V$.
+	}
+}
+
+\frame{{$k≤d$ general case, page 2}
+	\recall{
+		$n$ disks; $k$ recover the file; $d$ repair erased disks. $(U,V,W)≔(𝔽^d,𝔽^{d-k},𝔽^k)$\\
+		File $φ：⨁†U-spaces†→𝔽$ is such that $φ(†tensor†)=φ(∇(†tensor†))$.
+	}
+	
+	\uncovert{
+		Let the $n$ disks choose vectors $a₁,a₂,\dotsc,a_n∈U$ that are MDS in the sense that\\
+		(a) every $d$ of them span $U$; and (b) every $k$ of them span $U/W$ after projection.
+	}
+	
+	\uncovert{
+		Let the $h$th disk stores $φ↾_{a_h⊗W∧W+V⊗a_h⊗W+V⊗V⊗a_h}$ (i.e., replace $U$ by $a_h$).
+	}
+	
+	\uncovert{
+		Fix $k$ disks $𝒦$. Let $X≔\spa⟨a_h:h∈𝒦⟩$. Then $V+X=U$. We learn restriction of $φ$ to
+	}\\
+	\uncover<.->{
+		\alert<3,7,11>{this by parity check,}
+		\alert<4,8,12>{this by downloading,}
+		\alert<5,9,13>{this by MDS,}
+		\alert<6,10>{this by projecting.}
+	}
+	\visible<14>{\alert<14>{Done!}}\\
+	\uncover<3->{
+		$$\CD[skew,row sep=1em,/tikz/row 4/.style={xshift=5em}]{
+			W∧W∧W斜	＆	Ａ<11>{V⊗W∧W}斜	＆	Ａ<7>{V⊗V⊗W}斜	＆	Ａ<3>{V⊗V⊗V}		\\
+					＆	Ａ<13>{U⊗W∧W}直	＆	Ａ<9>{V⊗U⊗W}直	＆	Ａ<5>{V⊗V⊗U}直	\\
+					＆		{W⊗W∧W}	＆	Ａ<10>{V⊗W⊗W}	＆	Ａ<6>{V⊗V⊗W}		\\
+					＆	Ａ<12>{W⊗W∧X}曲	＆	Ａ<8>{V⊗W⊗X}曲	＆	Ａ<4>{V⊗V⊗X}曲	
+		}$$
+	}
+}
+
+\frame{{$k≤d$ general case, page 3}
+	\recall{
+		$(U,V,W)≔(𝔽^d,𝔽^{d-k},𝔽^k)$. The $h$th disk stores $φ↾_{a_h⊗W∧W+V⊗a_h⊗W+V⊗V⊗a_h}$
+	}
+	
+	\uncovert{
+		When the $f$th disk is erased, let $a_f≕(b_f,c_f)∈V⊕W$ and send $φ↾_{\im∂}$, where
+		\begin{align*}
+			∂：V⊗U	&	⟶V⊗V⊗U+V⊗U⊗W,				\\
+			x⊗y		&	⟼b_f⊗x⊗y-x⊗b_f⊗y+x⊗y⊗c_f,	\\
+			∂：U⊗W	&	⟶V⊗U⊗W+U⊗W∧W,				\\
+			x⊗y		&	⟼b_f⊗x⊗y-x⊗c_f∧y.	
+		\end{align*}\\
+	}
+	
+	\uncovert{
+		This weird definition is to satisfy the following two properties:
+	}
+	
+	\uncovert{
+		The definition of $∂$ extends to tensors of arbitrary length;\\
+		it becomes a differential operator (a co-boundary operator) and is linear in $a_f$.
+	}
+	
+	\uncovert{
+		Let $ν∈T^pV$ and $ω∈Λ^qW$, then $φ(∂(ν⊗ω))-φ(∂(∇(ν⊗ω)))=(-1)^pφ(ν⊗a_f⊗ω)$.\\
+		LHS is learned from the helps from healthy nodes; RHS is the erased content.
+	}
+}
+
+\section{Full generality Moulin Codes with larger diagram}
+
+\frame{{Full generality Moulin Codes with larger diagram}
+	\uncovert{\small
+		$$\CD[skew,column sep=-4em]{
+			W∧W∧W∧W斜	＆	V⊗W∧W∧W斜	＆	V⊗V⊗W∧W斜	＆	V⊗V⊗V⊗W斜	＆	V⊗V⊗V⊗V		\\
+						＆	U⊗W∧W∧W直	＆	V⊗U⊗W∧W直	＆	V⊗V⊗U⊗W直	＆	V⊗V⊗V⊗U直	\\
+						＆	W⊗W∧W∧W		＆	V⊗W⊗W∧W		＆	V⊗V⊗W⊗W		＆	V⊗V⊗V⊗W	
+		}$$
+	}
+	
+	\uncovert{
+		$$\CD[skew]{
+			T^{p-1}V⊗V⊗Λ^{q+1}W斜	＆	T^pV⊗V⊗Λ^qW斜	＆						\\
+									＆	T^pV⊗U⊗Λ^qW直	＆						\\
+									＆	T^pV⊗W⊗Λ^qW		＆	T^{p+1}V⊗W∧Λ^{q-1}W	
+		}$$
+	}
+}
+
+\frame{{Full generality Moulin Codes, page 2}
+	\vskip0ptplus-1fill
+	\uncover<+->{
+		\begin{align*}
+			\alert<.>{∇(u∧v∧w∧x∧y∧z)}	{}=\alert<.>{u}⊗v∧w∧x∧y∧z	\\
+										{}-\alert<.>{v}⊗u∧w∧x∧y∧z	\\
+										{}+\alert<.>{w}⊗u∧v∧x∧y∧z	\\
+										{}-\alert<.>{x}⊗u∧v∧w∧y∧z	\\
+										{}+\alert<.>{y}⊗u∧v∧w∧x∧z	\\
+										{}-\alert<.>{z}⊗u∧v∧w∧x∧y	&	.
+		\end{align*}\\[-1em]
+	}
+	\uncover<+->{
+		\begin{align*}
+			\alert<.>{∂(u⊗v⊗w⊗x⊗y⊗ζ)}	{}=\alert<.>{b_f}⊗u⊗v⊗w⊗x⊗y⊗ζ	\\
+										{}-u⊗\alert<.>{b_f}⊗v⊗w⊗x⊗y⊗ζ	\\
+										{}+u⊗v⊗\alert<.>{b_f}⊗w⊗x⊗y⊗ζ	\\
+										{}-u⊗v⊗w⊗\alert<.>{b_f}⊗x⊗y⊗ζ	\\
+										{}+u⊗v⊗w⊗x⊗\alert<.>{b_f}⊗y⊗ζ	\\
+										{}+u⊗v⊗w⊗x⊗y⊗\alert<.>{c_f}∧ζ	&	.
+		\end{align*}
+	}
+}
+
+\section{The performance of regenerating code}
+
+\frame{{The performance of regenerating code}
+	\recall{
+		$n$ disks; $k$ recover file; $d$ repair erasure; capacity $α$; bandwidth $β$; file size $M$.
+	}
+	
+	\uncovert{
+		Some reductions for ease of comparison: $(n,k,d)$ depends on actual applications.\\
+		So papers on this subject usually fix $(n,k,d)$ and compare different codes' $(α,β,M)$.
+	}
+	
+	\uncovert{
+		Researchers usually start from $n=d+1$ and increase $n$ later,\\
+		so it makes sense to ignore $n$ and parametrize the comparison by $(k,d)$.
+	}
+	
+	\uncovert{
+		It is also common to assume that the file is very very large, so\\
+		$M$ can be pretty large and we only care about the long-term efficiency $(α/M,β/M)$.
+	}
+	
+	\uncovert{
+		In short, it is reasonable to plot all possible $(α/M,β/M)$ for each and every $(k,d)$.
+	}
+}
+
+\section{The performance of Moulin Codes}
+
+\frame{{The performance of Moulin Code}
+	\vskip0ptplus-1fill
+	$$\tikz{
+		\def\p(####1,####2)/####3[####4]{
+			(####1*100/####3,####2*100/####3)circle(.06em)
+			node[below left,node contents={$(####1,####2)/####3[####4]$},anchor=50-10*####4]
+		}
+		\draw
+			\p(32,16)/160[6]--
+				\p(31,15)/154[5]--
+					\p(26,11)/125[4]--
+						\p(16,5)/70[3]--
+							\p(6,1)/20[2];
+		\def\xmin{20}\def\xmax{30}\def\ymax{10}\def\ymin{5}
+		\draw
+			(\xmin,\ymin-1)--(\xmax,\ymin-1)
+			foreach\x in{\xmin,...,\xmax}{(\x,\ymin-1)--+(0,-1mm)node[below]{0.\x}}
+			(\xmin-3,\ymin)--(\xmin-3,\ymax)
+			foreach\y in{\ymin,...,\ymax}{(\xmin-3,\y)--+(-1mm,0)node[left]{0.\ifnum\y<10 0\fi\y}}
+		;
+	}$$
+	\uncovert{
+		Back to the opening example $(k,d)=(5,6)$. These are the achievable $(α/M,β/M)$.\\
+	}
+	\uncovert{
+		The number in [square bracket] is the width of the diagram.
+	}
+}
+
+\section{Open questions}
+
+\frame{{Open questions}
+	\uncovert{
+		Is Moulin Codes' construction isomorphic to any (well-)known structure?
+	}
+	
+	\uncovert{
+		Are Moulin Codes optimal in terms of the $(α/M,β/M)$-plots?
+	}
+}
+
+\frame{{Thank you, Questions}
+	
+	Beamer available at
+	\tikz[baseline=(U.base)]\path[inner sep=0]
+		node(U){\url{https://ag21.symbol.codes}}
+		(U.north)+(0,.2)node[above]{\qrcode{https://ag21.symbol.codes}}
+	;
+	(so the links below are included).
+	
+	Paper version is titled \emph{Multilinear Algebra for Distributed Storage}, is available at\\
+	\url{https://arxiv.org/abs/2006.08911}, and is accepted for publication in SIAM SIAGA.
+	
+	A similar work (that focuses on $M=kα$ and uses symmetric algebra) is available at\\
+	\url{https://arxiv.org/abs/2006.16998} and accepted for publication in Springer AAECC.
+}
+
+\appendix
+
+\frame{{Why is it called Moulin Code?}
+	\emph{Mu}ti\emph{lin}ear algebra.
+	
+	This code is inspired by another code called \emph{Cascade Code}.
+	
+	\emph{Cascade} is also a type of waterfall.
+	
+	\emph{Moulin} is another type of waterfall, the one that appears in glaciers.
+	
+	\emph{AWS Glacier} is a popular storage service.
+}
+
+\end{document}
+
+
+
